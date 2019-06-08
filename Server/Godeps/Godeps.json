@@ -1,0 +1,46 @@
+{
+	"ImportPath": "github.com/insertapi",
+	"GoVersion": "go1.11",
+	"GodepVersion": "v80",
+	"Packages": [
+		"./..."
+	],
+	"Deps": [
+		{
+			"ImportPath": "github.com/bkaradzic/go-lz4",
+			"Comment": "v1.0.0-1-g7224d8d",
+			"Rev": "7224d8d8f27ef618c0a95f1ae69dbb0488abc33a"
+		},
+		{
+			"ImportPath": "github.com/gorilla/context",
+			"Comment": "v1.1.1-1-g51ce91d",
+			"Rev": "51ce91d2eaddeca0ef29a71d766bb3634dadf729"
+		},
+		{
+			"ImportPath": "github.com/gorilla/mux",
+			"Comment": "v1.6.2-12-g3d80bc8",
+			"Rev": "3d80bc801bb034e17cae38591335b3b1110f1c47"
+		},
+		{
+			"ImportPath": "github.com/robloxapi/rbxapi",
+			"Comment": "v0.1-59-g6d904cb",
+			"Rev": "6d904cb70ff82eff759d2acc5c94fa124912f6a6"
+		},
+		{
+			"ImportPath": "github.com/robloxapi/rbxfile",
+			"Rev": "86f90dbbbbcf58a3e4714ae244251b8971cbcb9f"
+		},
+		{
+			"ImportPath": "github.com/robloxapi/rbxfile/bin",
+			"Rev": "86f90dbbbbcf58a3e4714ae244251b8971cbcb9f"
+		},
+		{
+			"ImportPath": "github.com/robloxapi/rbxfile/json",
+			"Rev": "86f90dbbbbcf58a3e4714ae244251b8971cbcb9f"
+		},
+		{
+			"ImportPath": "github.com/robloxapi/rbxfile/xml",
+			"Rev": "86f90dbbbbcf58a3e4714ae244251b8971cbcb9f"
+		}
+	]
+}
