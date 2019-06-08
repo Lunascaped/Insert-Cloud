@@ -1,6 +1,3 @@
-# Insert-Cloud
-An alternative to the roblox service, Insert Service. Created by Robuyasu, and open source.
-
 ## What does it do?
 This new service allows you to insert any uncopylocked roblox model without any restrictions. It also sandboxes the models inserted to make sure they are safe and will not harm your game. It utilizes golang, lua, and python to achieve this.
 
