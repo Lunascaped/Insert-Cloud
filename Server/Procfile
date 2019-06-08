@@ -1,0 +1,2 @@
+web: insertapi
+worker: python schedule.py
