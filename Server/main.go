@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/insertapi/lib"
+	"github.com/insertapi/lib" // This part is a bit weird, heroku as far as I know doesn't allow local imports like ./
 
 	"github.com/gorilla/context"
 	"github.com/gorilla/mux"
