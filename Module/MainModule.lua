@@ -1,3 +1,10 @@
+--[[
+	Insert Cloud Module
+	Created and Maintained by Robuyasu
+	
+	Github Project: https://github.com/Robuyasu/Insert-Cloud
+--]]
+
 --Namespace--
 HTTP = game:GetService("HttpService")
 Replicated = game:GetService("ReplicatedStorage")
@@ -146,6 +153,22 @@ local ClassTypes = {
 		return Object
 	end;
 }
+local PropExceptions = {
+	Attachment0=true;
+	Attachment1=true;
+	Part0=true;
+	Part1=true;
+	Value=true;
+	Adornee=true;
+	NextSelectionUp=true;
+	NextSelectionDown=true;
+	NextSelectionLeft=true;
+	NextSelectionRight=true;
+	SelectionImageObject=true;
+	PrimaryPart=true;
+	SoundGroup=true;
+	CameraSubject=true;
+}
 --------
 
 function CompileValue (Prop, Value, Refs)
@@ -194,23 +217,6 @@ function LoadModel(Base, ParentObj, Model, Refs)
 	Recursive(Base, ParentObj, Model)
 	LoadProps(Objects, Refs)
 end
-
-local PropExceptions = {
-	Attachment0=true;
-	Attachment1=true;
-	Part0=true;
-	Part1=true;
-	Value=true;
-	Adornee=true;
-	NextSelectionUp=true;
-	NextSelectionDown=true;
-	NextSelectionLeft=true;
-	NextSelectionRight=true;
-	SelectionImageObject=true;
-	PrimaryPart=true;
-	SoundGroup=true;
-	CameraSubject=true;
-}
 
 function LoadProps(Objects, Refs)
 	for Object, Inst in pairs(Objects) do
@@ -268,11 +274,9 @@ function InitModel (Model, Parent, Pos, Settings)
 	Model.Parent = Parent or workspace
 end
 
-getfenv().script = nil
-
 local InsertCloud = {
 	
-	_VERSION='1.8.15';
+	_VERSION='2.1.0';
 	_DEVELOPERS={
 		'Robuyasu'; --Main developer
 		'Anaminus'; --Rbxfile gostruct api creator
@@ -282,7 +286,6 @@ local InsertCloud = {
 		'Sceleratis';
 		'mathcamp'; --TargetPoint fix model
 	};
-	Parent=game;
 	LoadAsset = function (self, URL, Key, ID, Parent, Pos, Settings)
 		ID = tostring(ID)
 		
@@ -298,6 +301,7 @@ local InsertCloud = {
 			Get = HTTP:GetAsync(New)
 		else
 			if Settings.LoadCache == true then
+				Model:Destroy()
 				local Clone = FindCache:Clone()
 				InitModel(Clone, Parent, Pos, Settings)
 				
@@ -351,6 +355,7 @@ local InsertCloud = {
 		end)
 		
 		if Status ~= true then
+			Model:Destroy()
 			return nil
 		else
 			return Model
@@ -366,15 +371,16 @@ local InsertCloud = {
 		Script.LOAD.Value = Code
 		Script.Disabled = false
 	end;
+	Credits=function(self)
+		print("_DEVELOPERS:")
+		for i,v in ipairs(self._DEVELOPERS) do
+			print(v)
+		end
+	end
 }
 
-print("Insert Cloud Module loaded.")
+print("Insert Cloud Module loaded. Developed and maintained by Robuyasu.")
 print("_VERSION: "..InsertCloud._VERSION)
-print("_DEVELOPERS:")
-for i,v in ipairs(InsertCloud._DEVELOPERS) do
-	print(v)
-end
-
 
 return setmetatable(InsertCloud, {
 	__index=function(self, index)
