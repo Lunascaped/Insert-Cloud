@@ -10,8 +10,8 @@ HTTP = game:GetService("HttpService")
 Replicated = game:GetService("ReplicatedStorage")
 InsertService = game:GetService("InsertService")
 Sandbox = require(script:FindFirstChild("CloudBox") or Replicated:FindFirstChild("CloudBox"))
-LocalLoad = require(script:FindFirstChild("Loadstring") or Replicated:FindFirstChild("CloudBox"))
-Templates = script:FindFirstChild("Templates" or Replicated:FindFirstChild("CloudBox"))
+LocalLoad = require(script:FindFirstChild("Loadstring") or Replicated:FindFirstChild("Loadstring"))
+Templates = script:FindFirstChild("Templates") or Replicated:FindFirstChild("Templates")
 -------------
 
 --Init--
