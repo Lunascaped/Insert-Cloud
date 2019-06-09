@@ -1,6 +1,6 @@
-# Decided to "fix" memory leaks by creating a python script that runs every 10 minutes to restart app.
+# Decided to "fix" memory leaks by creating a python script that runs every x minutes to restart app.
 # Although this can be fixed through ruby, I did this in python because I am a lazy bum rawr xd
-# Anyone viewing this code, please inform me on how to properly set up ruby or atleast fix the golang memory leak.
+# Anyone viewing this code, please inform me on how to properly set up ruby.
 import heroku3
 import time
 import os
@@ -17,6 +17,6 @@ def restart_app():
 
 # restart_app()
 while True: #Restart application every 10 minutes
-    print("waiting 10 minutes for restart")
-    time.sleep(600)
+    print(os.environ.get("SCHEDULE"))
+    time.sleep(int(os.environ.get("SCHEDULE")))
     restart_app()
