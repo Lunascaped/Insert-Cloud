@@ -300,79 +300,24 @@ function wrap(obj) -- Sandboxes the object by wrapping it\
 end;
 
 function generateSandbox(Code, _ENV, LoadLocal, Scr, Player) -- Creates a new sandbox for the script
-	return {
-		--Wrapping
+	local sandBox = {
+		--Wrapping userdatas
 		workspace=wrap(workspace);
 		Workspace=wrap(workspace);
 		game=wrap(game);
 		Game=wrap(game);
 		
 		--Lua Functions
-		print=print;
-		assert=assert;
-		error=error;
-		warn=warn;
-		pcall=pcall;
-		xpcall=xpcall;
-		ypcall=ypcall;
-		ipairs=ipairs;
-		pairs=pairs;
-		next=next;
-		wait=wait;
-		spawn=spawn;
 		Spawn=spawn;
-		tick=tick;
-		TweenInfo=TweenInfo;
-		PhysicalProperties=PhysicalProperties;
-		PathWaypoint=PathWaypoint;
-		gcinfo=gcinfo;
-		UserSettings=UserSettings;
-		select=select;
-		tonumber=tonumber;
-		tostring=tostring;
-		type=type;
-		typeof=typeof;
-		unpack=unpack;
-		_VERSION=_VERSION;
 		getmetatable=function(tab)
 			return getmetatable(tab)
 		end;
 		setmetatable=function(tab, meta)
 			return setmetatable(tab, meta)
 		end;
-		Vector3=Vector3;
-		Vector2=Vector2;
-		Vector3int16=Vector3int16;
-		Vector2int16=Vector2int16;
-		UDim2=UDim2;
-		Color3=Color3;
-		ColorSequence=ColorSequence;
-		ColorSequenceKeypoint=ColorSequenceKeypoint;
-		NumberRange=NumberRange;
-		NumberSequence=NumberSequence;
-		NumberSequenceKeypoint=NumberSequenceKeypoint;
-		UDim=UDim;
-		delay=delay;
-		elapsedTime=elapsedTime;
-		debug=debug;
-		time=time;
-		typeof=typeof;
-		Enum=Enum;
-		Ray=Ray;
 		LoadLibrary=wrap(LoadLibrary);
 		printidentity=printidentity;
 		version=version;
-		shared=shared;
-		os=os;
-		newproxy=newproxy;
-		_G=_G;
-		
-		
-		coroutine=coroutine;
-		math=math;
-		string=string;
-		table=table;
-		BrickColor=BrickColor;
 		Instance = {
 	        new = function(a, b)
 				if BlockedInstances[a:lower()] then
@@ -419,10 +364,17 @@ function generateSandbox(Code, _ENV, LoadLocal, Scr, Player) -- Creates a new sa
 		setfenv=function(...)
 			return error('CB Error: Cannot use setfenv in script!')
 		end;
-		rawset=rawset; --any competent lua sandboxer viewing this, msg me if this is safe or not
-		rawget=rawget;
-		rawequal=rawequal;
 	}
+	return setmetatable(sandBox, { -- Returning values not included in the sandbox
+		__index=function(self, index)
+			if rawget(self, index) then
+				return rawget(self, index)
+			else
+				local ind = getfenv()[index]
+				return wrap(ind)
+			end
+		end
+	})
 end
 
 SandboxFunc = function(Code, _ENV, LoadLocal, Scr, Player) -- Where the magic happens
