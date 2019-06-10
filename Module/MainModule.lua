@@ -54,7 +54,7 @@ ValueTypes = {
 		return Color
 	end;
 	
-	['Color'] = ColorFunc;
+	['Color'] = ColorFunc; --screw rbxm format changes E
 	['Color3'] = ColorFunc;
 	['Color3uint8'] = ColorFunc;
 	
