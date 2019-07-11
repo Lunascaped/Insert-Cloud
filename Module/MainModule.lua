@@ -1,7 +1,7 @@
 --[[
 	Insert Cloud Module
 	Created and Maintained by Robuyasu
-	
+
 	Github Project: https://github.com/Robuyasu/Insert-Cloud
 --]]
 
@@ -42,7 +42,7 @@ ValueTypes = {
 		return CF
 	end;
 	['Vector2'] = function(Val, Type)
-		local Vect = Vector3.new(Val.x, Val.y)
+		local Vect = Vector2.new(Val.x, Val.y)
 		return Vect
 	end;
 	['Vector3'] = function(Val, Type)
@@ -53,11 +53,11 @@ ValueTypes = {
 		local Color = BrickColor.new(Val)
 		return Color
 	end;
-	
+
 	['Color'] = ColorFunc; --screw rbxm format changes E
 	['Color3'] = ColorFunc;
 	['Color3uint8'] = ColorFunc;
-	
+
 	['UDim'] = function(Val, Type)
 		local UD = UDim.new(Val.scale, Val.offset)
 		return UD
@@ -66,11 +66,11 @@ ValueTypes = {
 		local UD = UDim2.new(Val.x.scale, Val.x.offset, Val.y.scale, Val.y.offset)
 		return UD
 	end;
-	
+
 	['ColorSequence'] = function(Val, Type)
 		local Sequences = {}
 		for _,v in ipairs(Val) do
-			
+
 			local Key = ColorSequenceKeypoint.new(v.time, ColorFunc(v.value, 'Cplor3'), v.envelope)
 			table.insert(Sequences, Key)
 		end
@@ -101,11 +101,11 @@ ValueTypes = {
 	['PhysicalProperties'] = function(Val, Type)
 		local number = Val
 		local Physical = PhysicalProperties.new(
-			number.density or 1, 
-			number.friction or 1, 
-			number.elasticity or 1, 
-			number.friction_weight or 1, 
-			number.elasticity_weight or 1 
+			number.density or 1,
+			number.friction or 1,
+			number.elasticity or 1,
+			number.friction_weight or 1,
+			number.elasticity_weight or 1
 		)
 		return Physical
 	end;
@@ -174,7 +174,7 @@ local PropExceptions = {
 function CompileValue (Prop, Value, Refs)
 	local Val = Value.value
 	local Type = Value.type
-	local Func = ValueTypes[Type] or ValueTypes[Prop] 
+	local Func = ValueTypes[Type] or ValueTypes[Prop]
 	if Func then
 		local New = Func(Val, Type, Refs)
 		return New
@@ -186,7 +186,7 @@ function CompileValue (Prop, Value, Refs)
 		end
 	end
 end
-	
+
 function LoadModel(Base, ParentObj, Model, Refs)
 	Refs = Refs or {}
 	local Objects = {}
@@ -212,7 +212,7 @@ function LoadModel(Base, ParentObj, Model, Refs)
 					Recursive(Base, Object, Inst.children)
 				end
 			end)
-		end	
+		end
 	end
 	Recursive(Base, ParentObj, Model)
 	LoadProps(Objects, Refs)
@@ -243,7 +243,7 @@ function LoadProps(Objects, Refs)
 		end
 	end
 end
-	
+
 function InitModel (Model, Parent, Pos, Settings)
 	Model.Parent = workspace
 	Model:MakeJoints()
@@ -275,7 +275,7 @@ function InitModel (Model, Parent, Pos, Settings)
 end
 
 local InsertCloud = {
-	
+
 	_VERSION='2.1.0';
 	_DEVELOPERS={
 		'Robuyasu'; --Main developer
@@ -288,11 +288,11 @@ local InsertCloud = {
 	};
 	LoadAsset = function (self, URL, Key, ID, Parent, Pos, Settings)
 		ID = tostring(ID)
-		
+
 		local Model = Instance.new("Model")
 		Model.Parent = Replicated
 		Model.Name = ID
-		
+
 		local New;
 		local Get;
 		local FindCache = ServerCache:FindFirstChild(ID)
@@ -304,26 +304,22 @@ local InsertCloud = {
 				Model:Destroy()
 				local Clone = FindCache:Clone()
 				InitModel(Clone, Parent, Pos, Settings)
-				
+
 				return Clone
 			else
 				New = URL..Key.."/"..ID
 				Get = HTTP:GetAsync(New)
 			end
 		end
-		
+
 		local Response;
 		local Instances;
-		
+
 		local Status, Error = pcall(function() --Pcall incase of error
 			Response = HTTP:JSONDecode(Get)
 			Instances = Response.instances
 			LoadModel(Model, Model, Instances)
-			local XSum = 0
-			local XTot = 0
-			local ZSum = 0
-			local ZTot = 0
-			local YLow = math.huge --Lowest Y
+			local XSum, XTot, ZSum, ZTot, YLow = 0, 0, 0, 0, math.huge
 			local function GetCent(Par)
 				for i,v in ipairs(Par:GetChildren())do
 					if v:IsA("BasePart") then
@@ -353,7 +349,7 @@ local InsertCloud = {
 			NewCache.Parent = ServerCache
 			InitModel(Model, Parent, Pos, Settings)
 		end)
-		
+
 		if Status ~= true then
 			Model:Destroy()
 			return nil
@@ -376,7 +372,11 @@ local InsertCloud = {
 		for i,v in ipairs(self._DEVELOPERS) do
 			print(v)
 		end
-	end
+	end;
+	RestartApp=function(self, URL, Key)
+		URL = URL:sub(0,#URL-8)
+		HTTP:GetAsync(URL.."/restart/"..Key)
+	end;
 }
 
 print("Insert Cloud Module loaded. Developed and maintained by Robuyasu.")
@@ -384,6 +384,6 @@ print("_VERSION: "..InsertCloud._VERSION)
 
 return setmetatable(InsertCloud, {
 	__index=function(self, index)
-		return rawget(self, index) or InsertService[index] 
+		return rawget(self, index) or InsertService[index]
 	end
 })

@@ -1,8 +1,8 @@
 -- Cloud box created and developed by Robuyasu
 -- please excuse me for my spaghetti code
 
-local SandbCache = {} -- Caches
-local WrapCache = {}
+local SandbCache = setmetatable({}, {__mode="k"}) -- Caches
+local WrapCache = setmetatable({}, {__mode="k"})
 
 local Replicated = game:GetService("ReplicatedStorage") --Services
 local Teleport = game:GetService('TeleportService')
@@ -20,7 +20,6 @@ local AssetService = game:GetService("AssetService")
 local LocalLoad = require(script.Parent.Loadstring)
 
 local RootParts = { -- The list of root parts, aka parts that cannot be read or edited
-	[workspace.Terrain]=true;
 	[Starterplayer]=true;
 	[Starterpack]=true;
 	[Startergui]=true;
@@ -102,7 +101,7 @@ local SandboxedMethods = { --Methods to sandbox
 	end;
 	['kick']=function(realobj, fakeobj, key)
 		return function()
-			return error('CB Error: Cannot kick a player!') 
+			return error('CB Error: Cannot kick a player!')
 		end
 	end;
 	['getservice']=function(realobj, fakeobj, key)
@@ -123,7 +122,7 @@ local SandboxedMethods = { --Methods to sandbox
 		if IsARoot(realobj, true) then
 			return error('CB Error: Realobj or Key is a root instance!')
 		end
-		
+
 		return function(self, ...)
 			return realobj:FireServer(unprap(...))
 		end
@@ -137,7 +136,7 @@ local SandboxedMethods = { --Methods to sandbox
 		if IsARoot(realobj, true) then
 			return error('CB Error: Realobj or Key is a root instance!')
 		end
-		
+
 		return function(self, ...)
 			return realobj:InvokeServer(unprap(...))
 		end
@@ -262,12 +261,12 @@ function unwrap(obj) -- Unwrap object to get the unsandboxed object version
 end
 
 function wrap(obj) -- Sandboxes the object by wrapping it\
-    if WrappableTypes[typeof(obj):lower()] then 
+    if WrappableTypes[typeof(obj):lower()] then
        	local realObj = obj;
 		if SandbCache[realObj] then
 			return SandbCache[realObj]
 		end
-		
+
        	local fakeObj = sandboxObj(realObj)
 		SandbCache[realObj] = fakeObj
 		WrapCache[fakeObj] = realObj
@@ -277,23 +276,18 @@ function wrap(obj) -- Sandboxes the object by wrapping it\
 			return unpack(wrap({obj(unpack(wrap({...})))})) -- wth is this
 		end
 	elseif type(obj) == 'table' then
-		local safe = {}
 		for i,v in pairs(obj) do
-			if not IsARoot(v, true) and not IsARoot(i, true) then
-				if type(i) == "number" then
-					table.insert(safe, wrap(v))
-				else
-					safe[wrap(i)] = wrap(v)
-				end
+			if i ~= nil or v ~= nil then
+				obj[wrap(i)] = wrap(v)
 			end
 		end
-		setmetatable(safe, wrap(getmetatable(obj)))
-		if getmetatable(safe) then
-			getmetatable(safe).__call = function(self, ...)
+
+		if getmetatable(obj) then --for rbx libraries
+			getmetatable(obj).__call = function(self, ...)
 				return unFunc(unpack({obj(unpack(unwrap({...})))}))
 			end
 		end
-		return safe
+		return obj
     else
         return obj;
     end;
@@ -306,7 +300,7 @@ function generateSandbox(Code, _ENV, LoadLocal, Scr, Player) -- Creates a new sa
 		Workspace=wrap(workspace);
 		game=wrap(game);
 		Game=wrap(game);
-		
+
 		--Lua Functions
 		Spawn=spawn;
 		getmetatable=function(tab)
@@ -315,9 +309,6 @@ function generateSandbox(Code, _ENV, LoadLocal, Scr, Player) -- Creates a new sa
 		setmetatable=function(tab, meta)
 			return setmetatable(tab, meta)
 		end;
-		LoadLibrary=wrap(LoadLibrary);
-		printidentity=printidentity;
-		version=version;
 		Instance = {
 	        new = function(a, b)
 				if BlockedInstances[a:lower()] then
@@ -330,7 +321,8 @@ function generateSandbox(Code, _ENV, LoadLocal, Scr, Player) -- Creates a new sa
 				end
 	        end;
 		};
-		
+		LoadLibrary=wrap(LoadLibrary);
+
 		--Void SB Support
 		owner=wrap(Player);
 		NLS=function(Code, Parent, Disabled)
@@ -344,7 +336,13 @@ function generateSandbox(Code, _ENV, LoadLocal, Scr, Player) -- Creates a new sa
 			NewLocal.Disabled = Disabled or false
 			return NewLocal
 		end;
-		
+		NS=function(Code, Parent, Disabled)
+			if not game:GetService("RunService"):IsClient() then
+				return error('CB Error: Cannot create a script within a script.')
+			end
+			return script.NS:InvokeServer(Code, unwrap(Parent), Disabled)
+		end;
+
 		--Possibly dangerous keywords
 		require=function(Module)
 			if type(Module) == "number" or type(Module) == "string" then
@@ -386,14 +384,14 @@ SandboxFunc = function(Code, _ENV, LoadLocal, Scr, Player) -- Where the magic ha
 		warn('Code variable is nil!')
 		return nil
 	end
-	
+
 	local sandbox = generateSandbox(Code, _ENV, LoadLocal, Scr, Player)
-	
+
 	local custsandbox = copy(sandbox)
-	local newScr = wrap(Scr) 
+	local newScr = wrap(Scr)
 	custsandbox['script'] = newScr
 	custsandbox['Script'] = newScr
-	
+
 	if type(Code) == 'string' then
 		if not LoadLocal then
 			if pcall(function() return loadstring(Code) end) then
@@ -405,14 +403,14 @@ SandboxFunc = function(Code, _ENV, LoadLocal, Scr, Player) -- Where the magic ha
 			Code = LocalLoad(Code, custsandbox)
 		end
 	end
-	
+
 	if Code == nil then
 		warn('Code could not be loaded!')
 		return nil
 	end
 
 	setfenv(Code, setmetatable(custsandbox, {__index = _ENV}));
-	
+
 	return Code
 end
 
