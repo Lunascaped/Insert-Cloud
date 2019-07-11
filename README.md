@@ -10,7 +10,9 @@ The web server is used by Heroku, which is a free application deployment platfor
 You will need Heroku CLI to use set up the server and a heroku account.
 
 Installation Guide: https://devcenter.heroku.com/articles/heroku-cli
+
 Mac Installation: ```brew tap heroku/brew && brew install heroku```
+
 Ubuntu 16+ Installation: ```sudo snap install --classic heroku```
 
 ## Installing
@@ -36,8 +38,11 @@ InsertCloud also comes with most of the InsertService functions, and a built in 
 
 ## ENV Variables
 HEROKU_APP_NAME : The name of your heroku app
+
 HEROKU_KEY : The API key for your heroku account
+
 USRNAME : The username or email of your heroku account
+
 KEY : The API key for your application. Make sure it is secure
 
 ## Usages
