@@ -15,6 +15,7 @@ Ubuntu 16+ Installation: ```sudo snap install --classic heroku```
 
 ## Installing
 Download the repo using git, or download as ZIP.
+
 ```git pull https://github.com/Robuyasu/Insert-Cloud.git --allow-unrelated-histories```
 
 Navigate to insertserver directory. Then, use command ```heroku create```.
