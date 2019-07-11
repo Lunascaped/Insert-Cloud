@@ -6,6 +6,13 @@ As you may know, creators can only insert models owned by them, which is one of 
 ![alt text](https://raw.githubusercontent.com/Robuyasu/Insert-Cloud/master/InsertCloudDiagram.png)
 The web server is used by Heroku, which is a free application deployment platform.
 
+## Features
+* Parses RBXM files into JSON
+* Compiles JSON into a roblox model
+* Uses a heroku web app server
+* Uses a roblox lua module
+* Sandboxes lua files
+
 ## Packages
 You will need Heroku CLI to use set up the server and a heroku account.
 
