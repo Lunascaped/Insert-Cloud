@@ -1,0 +1,61 @@
+{
+	"ImportPath": "insertserver",
+	"GoVersion": "go1.12",
+	"GodepVersion": "v80",
+	"Deps": [
+		{
+			"ImportPath": "github.com/bgentry/heroku-go",
+			"Rev": "ee4032d686ae18a765ac0df68c9524fba2a29ce3"
+		},
+		{
+			"ImportPath": "github.com/bkaradzic/go-lz4",
+			"Comment": "v1.0.0-1-g7224d8d",
+			"Rev": "7224d8d8f27ef618c0a95f1ae69dbb0488abc33a"
+		},
+		{
+			"ImportPath": "github.com/google/uuid",
+			"Comment": "v1.1.1-7-gc2e93f3",
+			"Rev": "c2e93f3ae59f2904160ceaab466009f965df46d6"
+		},
+		{
+			"ImportPath": "github.com/gorilla/context",
+			"Comment": "v1.1.1-1-g51ce91d",
+			"Rev": "51ce91d2eaddeca0ef29a71d766bb3634dadf729"
+		},
+		{
+			"ImportPath": "github.com/gorilla/mux",
+			"Comment": "v1.7.2",
+			"Rev": "ed099d42384823742bba0bf9a72b53b55c9e2e38"
+		},
+		{
+			"ImportPath": "github.com/insertapi/lib",
+			"Rev": "5ecebb272c464a0a9c841f2f6c9405f8a5c0afb9"
+		},
+		{
+			"ImportPath": "github.com/pborman/uuid",
+			"Comment": "v1.2.0",
+			"Rev": "8b1b92947f46224e3b97bb1a3a5b0382be00d31e"
+		},
+		{
+			"ImportPath": "github.com/robloxapi/rbxapi",
+			"Comment": "v0.1-61-ga888136",
+			"Rev": "a888136c07f27ffa24285312a8b36b3a5dc6422b"
+		},
+		{
+			"ImportPath": "github.com/robloxapi/rbxfile",
+			"Rev": "86f90dbbbbcf58a3e4714ae244251b8971cbcb9f"
+		},
+		{
+			"ImportPath": "github.com/robloxapi/rbxfile/bin",
+			"Rev": "86f90dbbbbcf58a3e4714ae244251b8971cbcb9f"
+		},
+		{
+			"ImportPath": "github.com/robloxapi/rbxfile/json",
+			"Rev": "86f90dbbbbcf58a3e4714ae244251b8971cbcb9f"
+		},
+		{
+			"ImportPath": "github.com/robloxapi/rbxfile/xml",
+			"Rev": "86f90dbbbbcf58a3e4714ae244251b8971cbcb9f"
+		}
+	]
+}
