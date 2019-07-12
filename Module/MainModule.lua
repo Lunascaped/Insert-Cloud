@@ -8,10 +8,39 @@
 --Namespace--
 HTTP = game:GetService("HttpService")
 Replicated = game:GetService("ReplicatedStorage")
+MarketPlaceService = game:GetService("MarketplaceService")
 InsertService = game:GetService("InsertService")
 Sandbox = require(script:FindFirstChild("CloudBox") or Replicated:FindFirstChild("CloudBox"))
 LocalLoad = require(script:FindFirstChild("Loadstring") or Replicated:FindFirstChild("Loadstring"))
 Templates = script:FindFirstChild("Templates") or Replicated:FindFirstChild("Templates")
+SandboxType = "Normal"
+
+_Settings = { -- SETTINGS FOR INSERT CLOUD
+
+	SandboxScripts = true; -- Sandboxes the scripts, which can protect your game from malicious scripts.
+	-- If you are inserting only your own models, then you should disable this.
+
+	DisableScripts = true; -- Disables scripts on load. This is to prevent scripts running
+	-- the moment it is loaded.
+
+	CompileAssetAfterLoad = false; -- Compiles asset after being loaded.
+
+	UnlockParts = true; -- Unlocks BaseParts in the model. If disabled, it will allow parts to be locked.
+
+	DefaultParent = workspace; -- The default parent for LoadAsset
+
+	DefaultCompileParent = workspace; -- The default parent for CompileAsset
+
+	DefaultSettings = {}; -- The default settings for LoadAsset.
+
+	DefaultPos = Vector3.new(0, 0, 0) -- The default position for the loaded asset to move to.
+
+}
+-- Settings were configured to support my Insert Wars game. Feel free to clone this module and change up the settings.
+
+if _Settings.SandboxScripts then
+	SandboxType = "Sandbox"
+end
 -------------
 
 --Init--
@@ -20,6 +49,14 @@ pcall(function()
 	script.Loadstring.Parent = Replicated
 	script.Templates.Parent = Replicated
 end)
+
+if not Replicated:FindFirstChild("GetLink") then
+	local GetLink = Instance.new("RemoteFunction", Replicated)
+	GetLink.Name = "GetLink"
+	GetLink.OnServerInvoke = function(Link)
+		return HTTP:GetAsync(Link)
+	end;
+end
 
 ServerCache = Replicated:FindFirstChild("Cache") or Instance.new("Folder", Replicated)
 ServerCache.Name = "Cache"
@@ -116,17 +153,17 @@ ValueTypes = {
 
 local ClassTypes = {
 	['Script'] = function(ClName, ParentObj, Inst, Properties)
-		local Object = Templates:FindFirstChild(ClName):Clone()
+		local Object = Templates:FindFirstChild(SandboxType..ClName):Clone()
 		Object.Parent = ParentObj
 		return Object
 	end;
 	['LocalScript'] = function(ClName, ParentObj, Inst, Properties)
-		local Object = Templates:FindFirstChild(ClName):Clone()
+		local Object = Templates:FindFirstChild(SandboxType..ClName):Clone()
 		Object.Parent = ParentObj
 		return Object
 	end;
 	['ModuleScript'] = function(ClName, ParentObj, Inst, Properties)
-		local Object = Templates:FindFirstChild(ClName):Clone()
+		local Object = Templates:FindFirstChild(SandboxType..ClName):Clone()
 		Object.Parent = ParentObj
 		return Object
 	end;
@@ -229,7 +266,10 @@ function LoadProps(Objects, Refs)
 					Object.LOAD.Value = Property.value
 				elseif x == "Disabled" and Property.value == false then
 					Object.IsDisabled.Value = false
-				elseif x == "Locked" then
+					if _Settings.DisableScripts == false then
+						Object.Disabled = Property.value
+					end
+				elseif x == "Locked" and _Settings.UnlockParts == true then
 					Object.Locked = false
 				elseif x == "Playing" then
 					Object.Playing = false
@@ -287,6 +327,13 @@ local InsertCloud = {
 		'mathcamp'; --TargetPoint fix model
 	};
 	LoadAsset = function (self, URL, Key, ID, Parent, Pos, Settings)
+		if type(URL) ~= "string" then return error("URL Parameter is invalid, must be a valid string") end
+		if type(Key) ~= "string" then return error("Key Parameter is invalid, must be a valid string") end
+
+		Settings = Settings or _Settings.DefaultSettings
+		Pos = Pos or _Settings.DefaultPos
+		Parent = Parent or _Settings.DefaultParent
+
 		ID = tostring(ID)
 
 		local Model = Instance.new("Model")
@@ -354,16 +401,36 @@ local InsertCloud = {
 			Model:Destroy()
 			return nil
 		else
+			if _Settings.CompileAssetAfterLoad then
+				self:CompileAsset(Model)
+			end
 			return Model
 		end
 	end;
+	CompileAsset=function(self, Model, Parent)
+		pcall(function() Model.PrimaryPart:Destroy() end)
+		Model:MakeJoints()
+		for i,v in ipairs(Model:GetDescendants()) do
+			if (v:IsA("Script") or v:IsA("LocalScript")) and v:FindFirstChild("IsDisabled") then
+				pcall(function()
+					v.Disabled = v.IsDisabled.Value
+					v.IsDisabled:Destroy()
+				end)
+			end
+		end;
+
+		for i,v in ipairs(Model:GetChildren()) do -- Ungroups model
+			v.Parent = Parent or workspace
+		end
+		Model:Destroy()
+	end;
 	LoadCode=function(self, Code, Type, Parent, Player)
-		local Script = Templates:FindFirstChild(Type)
+		local Script = Templates:FindFirstChild(SandboxType..Type)
 		Script = Script:Clone()
 		if Script:FindFirstChild("Player") then
 			Script.Player.Value = Player
 		end
-		Script.Parent = Parent or workspace
+		Script.Parent = Parent or _Settings.DefaultCompileParent
 		Script.LOAD.Value = Code
 		Script.Disabled = false
 	end;

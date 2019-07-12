@@ -329,7 +329,7 @@ function generateSandbox(Code, _ENV, LoadLocal, Scr, Player) -- Creates a new sa
 			if game:GetService("RunService"):IsClient() then
 				return error('CB Error: Cannot create a local script within a local script.')
 			end
-			local NewLocal = game:GetService("ReplicatedStorage").Templates.LocalScript:Clone()
+			local NewLocal = game:GetService("ReplicatedStorage").Templates.SandboxLocalScript:Clone()
 			NewLocal.IsDisabled.Value = Disabled or false
 			NewLocal.LOAD.Value = tostring(Code)
 			NewLocal.Parent = unwrap(Parent) or Player.Character
