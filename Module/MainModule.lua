@@ -417,10 +417,10 @@ local InsertCloud = {
 					v.IsDisabled:Destroy()
 				end)
 			end
-		end;
+		end
 
 		for i,v in ipairs(Model:GetChildren()) do -- Ungroups model
-			v.Parent = Parent or workspace
+			v.Parent = Parent or _Settings.DefaultCompileParent
 		end
 		Model:Destroy()
 	end;
@@ -430,7 +430,7 @@ local InsertCloud = {
 		if Script:FindFirstChild("Player") then
 			Script.Player.Value = Player
 		end
-		Script.Parent = Parent or _Settings.DefaultCompileParent
+		Script.Parent = Parent or workspace
 		Script.LOAD.Value = Code
 		Script.Disabled = false
 	end;
