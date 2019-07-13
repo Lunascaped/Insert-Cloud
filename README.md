@@ -31,7 +31,7 @@ Navigate to insertserver directory. Then, use command ```heroku create```.
 On the heroku dashboard website, navigate to your application and use the heroku/go buildpack in settings.
 Go to Config Vars, and set up your environment variables there.
 
-After setting the server up, test it by sending a get request. 
+After setting the server up, test it by sending a get request.
 Then, and set up a server script and requiring the InsertCloud in one of your roblox places.
 
 ```lua
@@ -40,6 +40,7 @@ local Key = 'APIKEY';
 local URL = 'https://appname.herokuapp.com/assets/';
 
 local Model = InsertCloud:LoadAsset(URL, KEY, RBXID);
+InsertCloud:CompileAsset(Model, workspace)
 ```
 InsertCloud also comes with most of the InsertService functions, and a built in Sandbox which helps sandbox your scripts.
 

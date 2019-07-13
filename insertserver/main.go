@@ -52,7 +52,7 @@ func restartApp(res http.ResponseWriter, request *http.Request) {
 		res.Write([]byte("ERROR 401: Incorrect API key"))
 		return
 	}
-
+	
 	client := heroku.Client{Username: os.Getenv("USRNAME"), Password: os.Getenv("HEROKU_KEY")}
 	client.DynoRestartAll(os.Getenv("HEROKU_APP_NAME"))
 }
