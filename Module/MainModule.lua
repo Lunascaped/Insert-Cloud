@@ -209,6 +209,7 @@ local PropExceptions = {
 	PrimaryPart=true;
 	SoundGroup=true;
 	CameraSubject=true;
+	CustomPhysicalProperties=true;
 }
 --------
 
