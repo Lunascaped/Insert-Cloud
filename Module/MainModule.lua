@@ -62,6 +62,10 @@ ServerCache = Replicated:FindFirstChild("Cache") or Instance.new("Folder", Repli
 ServerCache.Name = "Cache"
 
 function ColorFunc(Val, Type)
+	if Type == "Float" then -- roblox, you're weird
+		local Color = BrickColor.new(Val)
+		return Color
+	end
 	if Val.r <= 1 and Val.g <= 1 and Val.b <= 1 then
 		local Color = Color3.new(Val.r, Val.g, Val.b)
 		return Color
