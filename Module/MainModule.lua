@@ -424,10 +424,13 @@ local InsertCloud = {
 			end
 		end
 
-		for i,v in ipairs(Model:GetChildren()) do -- Ungroups model
+		local Children = Model:GetChildren()
+		for i,v in ipairs(Children) do -- Ungroups model
 			v.Parent = Parent or _Settings.DefaultCompileParent
 		end
 		Model:Destroy()
+
+		return unpack(Children)
 	end;
 	LoadCode=function(self, Code, Type, Parent, Player)
 		local Script = Templates:FindFirstChild(SandboxType..Type)
@@ -456,6 +459,19 @@ print("_VERSION: "..InsertCloud._VERSION)
 
 return setmetatable(InsertCloud, {
 	__index=function(self, index)
-		return rawget(self, index) or InsertService[index]
+		local rawIndex = rawget(self, index)
+		local serviceIndex = InsertService[index]
+
+		if rawIndex then
+			return rawIndex
+		end
+
+		if type(serviceIndex) == 'function' then
+			return function(self, ...)
+				return serviceIndex(InsertService, ...)
+			end
+		else
+			return serviceIndex
+		end
 	end
 })
