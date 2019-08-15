@@ -5,16 +5,6 @@
 	Github Project: https://github.com/Robuyasu/Insert-Cloud
 --]]
 
---Namespace--
-HTTP = game:GetService("HttpService")
-Replicated = game:GetService("ReplicatedStorage")
-MarketPlaceService = game:GetService("MarketplaceService")
-InsertService = game:GetService("InsertService")
-Sandbox = require(script:FindFirstChild("CloudBox") or Replicated:FindFirstChild("CloudBox"))
-LocalLoad = require(script:FindFirstChild("Loadstring") or Replicated:FindFirstChild("Loadstring"))
-Templates = script:FindFirstChild("Templates") or Replicated:FindFirstChild("Templates")
-SandboxType = "Normal"
-
 _Settings = { -- SETTINGS FOR INSERT CLOUD
 
 	SandboxScripts = true; -- Sandboxes the scripts, which can protect your game from malicious scripts.
@@ -36,6 +26,16 @@ _Settings = { -- SETTINGS FOR INSERT CLOUD
 	DefaultPos = Vector3.new(0, 0, 0) -- The default position for the loaded asset to move to.
 
 }
+
+--Namespace--
+HTTP = game:GetService("HttpService")
+Replicated = game:GetService("ReplicatedStorage")
+MarketPlaceService = game:GetService("MarketplaceService")
+InsertService = game:GetService("InsertService")
+Sandbox = require(script:FindFirstChild("CloudBox") or Replicated:FindFirstChild("CloudBox"))
+LocalLoad = require(script:FindFirstChild("Loadstring") or Replicated:FindFirstChild("Loadstring"))
+Templates = script:FindFirstChild("Templates") or Replicated:FindFirstChild("Templates")
+SandboxType = "Normal"
 -- Settings were configured to support my Insert Wars game. Feel free to clone this module and change up the settings.
 
 if _Settings.SandboxScripts then
@@ -141,6 +141,7 @@ ValueTypes = {
 	end;
 	['PhysicalProperties'] = function(Val, Type)
 		local number = Val
+		if number.custom_physics == false then return nil end
 		local Physical = PhysicalProperties.new(
 			number.density or 1,
 			number.friction or 1,
@@ -276,10 +277,8 @@ function LoadProps(Objects, Refs)
 					end
 				elseif x == "Locked" and _Settings.UnlockParts == true then
 					Object.Locked = false
-				elseif x == "Playing" then
-					Object.Playing = false
 				end
-				if (Object[x] ~= nil or PropExceptions[x]) and x ~= "Disabled" and x ~= 'Locked' and x ~= "Playing" then
+				if (Object[x] ~= nil or PropExceptions[x]) and x ~= "Disabled" and x ~= 'Locked' then
 					local CompdVal = CompileValue(x, Property, Refs)
 					Object[x] = CompdVal
 				end
@@ -321,7 +320,7 @@ end
 
 local InsertCloud = {
 
-	_VERSION='2.1.0';
+	_VERSION='2.6.5';
 	_DEVELOPERS={
 		'Robuyasu'; --Main developer
 		'Anaminus'; --Rbxfile gostruct api creator

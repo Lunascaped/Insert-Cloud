@@ -59,10 +59,6 @@ local WrappableTypes = { -- List of userdata types to wrap
 }
 local SandboxedMethods = { --Methods to sandbox
 	['connect']=function(realobj, fakeobj, key)
-		local ConnectString = tostring(realobj):sub(8)
-		if ConnectString == 'PlayerAdded' then
-			return error('CB Error: Illegal connect!')
-		end
 		return function(self, ...)
 			return realobj:Connect(unpack(wrap({...})))
 		end
@@ -72,7 +68,13 @@ local SandboxedMethods = { --Methods to sandbox
 			return error('CB Error: Object being deleted cannot be a root part!')
 		end
 		return function()
-			return realobj:ClearAllChildren()
+			for _, Object in ipairs(realobj:GetChildren()) do
+				pcall(function()
+					if not IsARoot(Object, true) and not BlockedClasses[Object['ClassName']] and not IsBasePlate(Object) and not realobj:FindFirstAncestorOfClass("Backpack") then
+						Object:Destroy()
+					end
+				end)
+			end
 		end
 	end;
 	['destroy']=function(realobj, fakeobj, key)
@@ -128,6 +130,10 @@ local SandboxedMethods = { --Methods to sandbox
 		end
 	end;
 	['fireclient']=function(realobj, fakeobj, key)
+		if IsARoot(realobj, true) then
+			return error('CB Error: Realobj or Key is a root instance!')
+		end
+
 		return function(self, ...)
 			return realobj:FireClient(unprap(...))
 		end
@@ -142,6 +148,10 @@ local SandboxedMethods = { --Methods to sandbox
 		end
 	end;
 	['invokeclient']=function(realobj, fakeobj, key)
+		if IsARoot(realobj, true) then
+			return error('CB Error: Realobj or Key is a root instance!')
+		end
+
 		return function(self, ...)
 			return realobj:InvokeClient(unprap(...))
 		end
@@ -283,8 +293,9 @@ function wrap(obj) -- Sandboxes the object by wrapping it\
 		end
 
 		if getmetatable(obj) then --for rbx libraries
+			local oldcall = getmetatable(obj).__call
 			getmetatable(obj).__call = function(self, ...)
-				return unFunc(unpack({obj(unpack(unwrap({...})))}))
+				return unFunc(unpack({oldcall(obj, unpack(unwrap({...})))}))
 			end
 		end
 		return obj
